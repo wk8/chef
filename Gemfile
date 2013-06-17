@@ -2,6 +2,8 @@ source "https://rubygems.org"
 
 gemspec
 
+gem 'mixlib-shellout', :git => 'git://github.com/opscode/mixlib-shellout.git', :branch => 'btm/utf8'
+
 gem "activesupport", :group => :compat_testing, :platform => "ruby"
 
 group(:docgen) do
