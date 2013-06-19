@@ -26,6 +26,7 @@ class Chef
 
       def initialize(ignore_file_or_repo)
         @ignore_file = find_ignore_file(ignore_file_or_repo)
+        puts "DEBUG: Examining chefignore file: #{@ignore_file}"
         @ignores = parse_ignore_file
       end
 
@@ -45,6 +46,7 @@ class Chef
         ignore_globs = []
         if File.exist?(@ignore_file) && File.readable?(@ignore_file)
           File.foreach(@ignore_file) do |line|
+            puts "DEBUG: #{@ignore_file}: line '#{line}'"
             ignore_globs << line.strip unless line =~ COMMENTS_AND_WHITESPACE
           end
         else
