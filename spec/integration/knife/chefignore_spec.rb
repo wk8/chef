@@ -240,7 +240,7 @@ EOM
   end
 
   when_the_repository 'has a cookbook named chefignore' do
-    file 'cookbooks/chefignore/metadata.rb', {}
+    file 'cookbooks/chefignore/metadata.rb', "\n"
     it 'knife list -Rfp /cookbooks shows it' do
       knife('list --local -Rfp /cookbooks').should_succeed <<EOM
 /cookbooks/chefignore/
@@ -250,7 +250,7 @@ EOM
   end
 
   when_the_repository 'has multiple cookbook paths, one with a chefignore file and the other with a cookbook named chefignore' do
-    file 'cookbooks1/chefignore', ''
+    file 'cookbooks1/chefignore', "\n"
     file 'cookbooks1/blah/metadata.rb', ''
     file 'cookbooks2/chefignore/metadata.rb', ''
     before :each do
