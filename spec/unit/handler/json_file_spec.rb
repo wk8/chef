@@ -49,6 +49,10 @@ describe Chef::Handler::JsonFile do
       File.stub!(:open).and_yield(@file_mock)
     end
 
+    after(:each) do
+      # https://github.com/rspec/rspec-core/issues/858
+      Time.unstub(:now)
+    end
 
     it "saves run status data to a file as JSON" do
       @handler.should_receive(:build_report_dir)

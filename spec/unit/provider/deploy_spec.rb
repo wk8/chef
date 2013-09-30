@@ -22,7 +22,7 @@ describe Chef::Provider::Deploy do
 
   before do
     @release_time = Time.utc( 2004, 8, 15, 16, 23, 42)
-    Time.stub!(:now).and_return(@release_time)
+    Time.stub(:now).and_return(@release_time)
     @expected_release_dir = "/my/deploy/dir/releases/20040815162342"
     @resource = Chef::Resource::Deploy.new("/my/deploy/dir")
     @node = Chef::Node.new
@@ -31,6 +31,11 @@ describe Chef::Provider::Deploy do
     @provider = Chef::Provider::Deploy.new(@resource, @run_context)
     @provider.stub!(:release_slug)
     @provider.stub!(:release_path).and_return(@expected_release_dir)
+  end
+
+  after do
+    # https://github.com/rspec/rspec-core/issues/858
+    Time.unstub(:now)
   end
 
   it "loads scm resource" do

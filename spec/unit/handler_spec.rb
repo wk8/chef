@@ -42,9 +42,14 @@ describe Chef::Handler do
       @run_status.run_context = @run_context
       @start_time = Time.now
       @end_time = @start_time + 4.2
-      Time.stub!(:now).and_return(@start_time, @end_time)
+      Time.stub(:now).and_return(@start_time, @end_time)
       @run_status.start_clock
       @run_status.stop_clock
+    end
+
+    after do
+      # https://github.com/rspec/rspec-core/issues/858
+      Time.unstub(:now)
     end
 
     it "has a shortcut for the exception" do
@@ -124,9 +129,14 @@ describe Chef::Handler do
       @run_status.run_context = @run_context
       @start_time = Time.now
       @end_time = @start_time + 4.2
-      Time.stub!(:now).and_return(@start_time, @end_time)
+      Time.stub(:now).and_return(@start_time, @end_time)
       @run_status.start_clock
       @run_status.stop_clock
+    end
+
+    after do
+      # https://github.com/rspec/rspec-core/issues/858
+      Time.unstub(:now)
     end
 
     it "has a shortcut for all resources" do
@@ -171,8 +181,13 @@ describe Chef::Handler do
   describe "when running a start handler" do
     before do
       @start_time = Time.now
-      Time.stub!(:now).and_return(@start_time)
+      Time.stub(:now).and_return(@start_time)
       @run_status.start_clock
+    end
+
+    after do
+      # https://github.com/rspec/rspec-core/issues/858
+      Time.unstub(:now)
     end
 
     it "should not have all resources" do

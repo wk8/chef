@@ -84,7 +84,7 @@ describe Chef::REST::AuthCredentials do
     end
 
     it "generates signature headers for the request" do
-      Time.stub!(:now).and_return(@request_time)
+      Time.stub(:now).and_return(@request_time)
       actual = @auth_credentials.signature_headers(@request_params)
       actual["HOST"].should                    == "localhost"
       actual["X-OPS-AUTHORIZATION-1"].should == "kBssX1ENEwKtNYFrHElN9vYGWS7OeowepN9EsYc9csWfh8oUovryPKDxytQ/"
@@ -98,6 +98,8 @@ describe Chef::REST::AuthCredentials do
       actual["X-OPS-TIMESTAMP"].should    == "2010-04-10T17:34:20Z"
       actual["X-OPS-USERID"].should       == "client-name"
 
+      # https://github.com/rspec/rspec-core/issues/858
+      Time.unstub(:now)
     end
 
     describe "when configured for version 1.1 of the authn protocol" do
@@ -110,7 +112,7 @@ describe Chef::REST::AuthCredentials do
       end
 
       it "generates the correct signature for version 1.1" do
-        Time.stub!(:now).and_return(@request_time)
+        Time.stub(:now).and_return(@request_time)
         actual = @auth_credentials.signature_headers(@request_params)
         actual["HOST"].should                    == "localhost"
         actual["X-OPS-CONTENT-HASH"].should == "1tuzs5XKztM1ANrkGNPah6rW9GY="
@@ -120,6 +122,9 @@ describe Chef::REST::AuthCredentials do
 
         # mixlib-authN will test the actual signature stuff for each version of
         # the protocol so we won't test it again here.
+
+        # https://github.com/rspec/rspec-core/issues/858
+        Time.unstub(:now)
       end
     end
   end

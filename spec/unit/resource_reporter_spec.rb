@@ -49,7 +49,12 @@ describe Chef::ResourceReporter do
     @events = Chef::EventDispatch::Dispatcher.new
     @run_context = Chef::RunContext.new(@node, {}, @events)
     @run_status = Chef::RunStatus.new(@node, @events)
-    Time.stub!(:now).and_return(@start_time, @end_time)
+    Time.stub(:now).and_return(@start_time, @end_time)
+  end
+
+  after do
+    # https://github.com/rspec/rspec-core/issues/858
+    Time.unstub(:now)
   end
 
   context "when first created" do

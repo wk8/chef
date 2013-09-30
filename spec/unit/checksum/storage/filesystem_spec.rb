@@ -26,10 +26,15 @@ describe Chef::Checksum::Storage::Filesystem do
 
     @now = Time.now
 
-    Time.stub!(:now).and_return(@now)
+    Time.stub(:now).and_return(@now)
 
     @checksum_of_the_file = "3fafecfb15585ede6b840158cbc2f399"
     @storage = Chef::Checksum::Storage::Filesystem.new(Chef::Config.checksum_path, @checksum_of_the_file)
+  end
+
+  after do
+    # https://github.com/rspec/rspec-core/issues/858
+    Time.unstub(:now)
   end
 
   it "has the path to the file in the checksum repo" do
