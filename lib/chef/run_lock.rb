@@ -52,19 +52,24 @@ class Chef
     def acquire
       # ensure the runlock_file path exists
       create_path(File.dirname(runlock_file))
-      @runlock = File.open(runlock_file,'w+')
+      @runlock = File.open(runlock_file,'a+')
       # if we support FD_CLOEXEC (linux, !windows), then use it.
       # NB: ruby-2.0.0-p195 sets FD_CLOEXEC by default, but not ruby-1.8.7/1.9.3
       if Fcntl.const_defined?('F_SETFD') && Fcntl.const_defined?('FD_CLOEXEC')
         runlock.fcntl(Fcntl::F_SETFD, runlock.fcntl(Fcntl::F_GETFD, 0) | Fcntl::FD_CLOEXEC)
       end
-      unless runlock.flock(File::LOCK_EX|File::LOCK_NB)
+      unless runlock.flock(File::LOCK_NB|File::LOCK_EX)
         # Another chef client running...
         if @wait
           runpid = runlock.read.strip.chomp
           Chef::Log.warn("Chef client #{runpid} is running, will wait for it to finish and then run.")
           runlock.flock(File::LOCK_EX)
+          true
+        else
+          false
         end
+      else
+        true
       end
     end
 
@@ -72,7 +77,9 @@ class Chef
       runlock.truncate(0)
       runlock.rewind # truncate doesn't reset position to 0.
       runlock.write(Process.pid.to_s)
-      runlock.flush # flush the file
+      # flush the file fsync flushes the system buffers
+      # in addition to ruby buffers
+      runlock.fsync 
     end
     
     # Release the system-wide lock.
